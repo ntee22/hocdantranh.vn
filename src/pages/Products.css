@@ -1,0 +1,28 @@
+.products-page {
+    padding-bottom: 4rem;
+}
+
+.page-header {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 4rem 20px;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    color: var(--color-secondary);
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.products-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}

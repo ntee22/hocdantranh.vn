@@ -1,0 +1,24 @@
+:root {
+  /* Colors */
+  --color-primary: #5D2E2E; /* Deep Wood / Burgundy */
+  --color-secondary: #C5A059; /* Gold / Brass */
+  --color-bg: #F9F5F0; /* Off-white / Cream */
+  --color-text: #333333; /* Dark Grey */
+  --color-white: #FFFFFF;
+  --color-light-grey: #E5E5E5;
+
+  /* Typography */
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 8rem;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.4s ease;
+}
