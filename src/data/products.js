@@ -4,8 +4,9 @@ export const products = [
         id: 1,
         name: "Đàn tranh Koto Gõ Đỏ",
         price: "4.000.000₫",
-        image: "https://images.unsplash.com/photo-1680792563719-288027b2a090?q=80&w=2787&auto=format&fit=crop",
-        description: "Đàn tranh Koto gỗ đỏ chất lượng cao, âm thanh vang sáng.",
+        image: "https://static.wixstatic.com/media/d86b8e_9957680edf604c08a90fbf072f345df4~mv2.webp/v1/fill/w_1024,h_827,al_c,q_85,enc_avif,quality_auto/d86b8e_9957680edf604c08a90fbf072f345df4~mv2.webp",
+        hoverImage: "https://static.wixstatic.com/media/d86b8e_0b573594509a48a4bbcce679afdbb553~mv2.webp/v1/fill/w_1024,h_827,al_c,q_85,enc_avif,quality_auto/d86b8e_0b573594509a48a4bbcce679afdbb553~mv2.webp",
+        description: "Đàn tranh lai koto gỗ Gõ Đỏ bên xưởng mình vừa mới ra thêm loại này âm thanh rất hay ❤️ chỉ sau cẩm lai xíu thui😄, loại gỗ này cũng có vân gỗ luôn nha cả nhà lên màu tự nhiên khá đẹp 😍 Quà Tặng: Móng sắt và bao đàn xịn",
         category: "Dan Tranh"
     },
     {

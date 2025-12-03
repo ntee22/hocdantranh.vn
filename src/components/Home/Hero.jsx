@@ -13,8 +13,8 @@ const Hero = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    HỌC ĐÀN TRANH - <br />
-                    <span className="highlight">CỔ TRANH ĐAN THANH</span>
+                    Học Đàn Tranh - <br />
+                    <span className="highlight">Guzheng Đan Thanh</span>
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -39,6 +39,7 @@ const Hero = () => {
                 >
                     😘 Ngoài ra HọcĐànTranh.vn còn hỗ trợ đặt Đàn Tranh Việt và Cổ Tranh trực tiếp không qua trung gian với giá cả hấp dẫn và chất lượng tuyệt vời.
                 </motion.p>
+                
                 <motion.div
                     className="hero-buttons"
                     initial={{ opacity: 0, y: 20 }}
@@ -53,14 +54,24 @@ const Hero = () => {
                     </Link>
                 </motion.div>
             </div>
-            <div className="hero-image">
-                <motion.img
-                    src="https://images.unsplash.com/photo-1680792563719-288027b2a090?q=80&w=2787&auto=format&fit=crop"
-                    alt="Đàn Tranh"
+            <div className="hero-video">
+                <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
-                />
+                >
+                    <iframe
+                        src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fdantranhhcm%2Fvideos%2F398278379115269%2F&autoplay=true&mute=true&width=400&show_text=false&height=700&appId"
+                        width="400"
+                        height="700"
+                        style={{ border: 'none', overflow: 'hidden', borderRadius: '20px' }}
+                        scrolling="no"
+                        frameBorder="0"
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                        allowFullScreen={true}
+                        title="Đàn Tranh Video"
+                    ></iframe>
+                </motion.div>
             </div>
         </section>
     );

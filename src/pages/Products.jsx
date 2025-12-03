@@ -18,13 +18,18 @@ const Products = () => {
                         <Card
                             key={product.id}
                             image={product.image}
+                            hoverImage={product.hoverImage}
                             title={product.name}
                             price={product.price}
                             originalPrice={product.originalPrice}
                             onSale={product.onSale}
                             subtitle={product.description}
                         >
-                            <Button variant="primary" style={{ width: '100%' }}>
+                            <Button 
+                                variant="primary" 
+                                style={{ width: '100%' }}
+                                onClick={() => window.open('https://www.facebook.com/messages/t/494579524037541', '_blank', 'noopener,noreferrer')}
+                            >
                                 Liên Hệ Mua
                             </Button>
                         </Card>

@@ -38,17 +38,25 @@
     gap: 1rem;
 }
 
-.hero-image {
+.hero-video {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.hero-image img {
+.hero-video iframe {
     max-width: 100%;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
     border-radius: 20px;
     box-shadow: 20px 20px 0 var(--color-secondary);
+}
+
+.hero-video > div {
+    width: 100%;
+    max-width: 400px;
 }
 
 @media screen and (max-width: 768px) {
@@ -70,7 +78,7 @@
         justify-content: center;
     }
 
-    .hero-image img {
+    .hero-video iframe {
         box-shadow: 10px 10px 0 var(--color-secondary);
         margin-bottom: 2rem;
     }
