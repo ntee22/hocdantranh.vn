@@ -99,7 +99,7 @@ src/
 
 ## 📞 Thông tin liên hệ
 
-- **Địa chỉ**: 383/3/15A Quang Trung, Phường 10, Gò Vấp, Hồ Chí Minh, Vietnam
+- **Địa chỉ**: 383/3/15A Quang Trung, phường 10, quận Gò Vấp
 - **SĐT**: 094 436 40 16 (Đan Thanh)
 - **Giờ hoạt động**: Tất cả các ngày trong tuần, từ 9h sáng đến 20h tối
 
@@ -120,4 +120,4 @@ Dữ liệu sản phẩm và sheet nhạc được lấy từ website Wix gốc:
 
 ## 📄 License
 
-©2023 by Học Đàn Tranh - Cổ Tranh - Guzheng - Đan Thanh
+©2023 by Học Đàn Tranh - Guzheng - Đan Thanh

@@ -36,6 +36,19 @@
 .hero-buttons {
     display: flex;
     gap: 1rem;
+    width: 100%;
+}
+
+.hero-buttons a {
+    flex: 1;
+    display: block;
+    min-width: 0;
+}
+
+.hero-buttons .btn {
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
 }
 
 .hero-video {

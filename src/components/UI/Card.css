@@ -89,7 +89,7 @@
     font-size: 0.9rem;
     color: #999;
     text-decoration: line-through;
-    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
 }
 
 .card-sale-badge {
@@ -98,9 +98,12 @@
     right: 10px;
     background-color: #e74c3c;
     color: white;
-    padding: 0.25rem 0.75rem;
+    padding: 0.4rem 0.8rem;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 700;
     z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }

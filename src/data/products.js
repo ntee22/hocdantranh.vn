@@ -1,119 +1,112 @@
+import { hover } from "framer-motion";
+
+// Import all images from the image folder
+const imageModules = import.meta.glob('../image/*.{jpg,jpeg,png,webp,gif}', { eager: true });
+const images = {};
+
+// Create a mapping of filename to imported image
+Object.keys(imageModules).forEach((path) => {
+    const filename = path.split('/').pop().replace(/\.[^/.]+$/, '');
+    images[filename] = imageModules[path].default || imageModules[path];
+});
+
 export const products = [
-    // Đàn Tranh Việt Nam
+    // Guzheng (Cổ Tranh) - Fullsize
     {
         id: 1,
+        name: "Thanh Lâm Linh Cảnh",
+        oldPrice: "32.000.000₫",
+        newPrice: "16.500.000₫",
+        image: images.guzhengHuyenDong1,
+        hoverImage: images.guzhengHuyenDong2,
+        description: "Gỗ Hắc Đàn – Họa Tiết Lâm Sơn được vẽ tay cực tinh tế, khung cảnh mây núi – hạc trắng như tranh cổ phong sống dậy. ✨ Nhìn vào là thấy vibe tiên hiệp, cầm lên thần thái tăng +100 luôn!",
+        category: "Guzheng"
+    },
+
+    {
+        id: 2,
+        name: "Ngọc Vân Tiên Ảnh",
+        oldPrice: "32.000.000₫",
+        newPrice: "16.500.000₫",
+        image: images.guzhengHuyenDong3,
+        hoverImage: images.guzhengHuyenDong4,
+        description: "Gỗ Huyết Đàn – Tiên Linh Hươu Ngọc Mặt đàn vẽ tay phong cách cổ phong: hươu ngọc – trăng tròn – dải ngân hà lấp lánh. ✨ Team mê thần tiên mỹ cảnh nhìn phát là “đổ”!",
+        category: "Guzheng"
+    },
+
+    {
+        id: 3,
+        name: "Hoa Chi Vân Sắc ",
+        oldPrice: "15.000.000₫",
+        newPrice: "9.500.000₫",
+        image: images.guzhengHuyenDong5,
+        hoverImage: images.guzhengHuyenDong6,
+        description: "Gỗ Hoàng Hoa Lê – Sơn Mài Khảm Hoa. Tông trắng vàng thanh nhã, hoa nổi phủ bóng siêu đẹp. ✨ Một trong những em dịu dàng – sang xịn",
+        category: "Guzheng"
+    },
+
+    {
+        id: 4,
+        name: "Thanh Hà Cổ Cầm",
+        oldPrice: "35.000.000₫",
+        newPrice: "25.000.000₫",
+        image: images.guzhengHuyenDong7,
+        hoverImage: images.guzhengHuyenDong8,
+        description: "Mang vẻ đẹp thanh nhã và thuần khiết như chính tên gọi — thân đàn được chế tác từ gỗ Bách Thảo quý, hòa cùng âm bảng từ gỗ ngô đồng 20 năm tuổi. 🌸 Họa tiết sen vàng được danh họa vẽ tay thủ công, phủ lớp sơn nổi 4D ánh lam ngọc, mỗi nét cọ đều là nghệ thuật. 🌺 Dây đàn làm từ lụa hoàng kim, mang đến âm sắc ấm áp, vang xa và mềm mại tựa nước chảy qua tim người nghe. Đây là dòng 135 cm siêu cao cấp của Huyền Đồng, kết hợp hoàn hảo giữa mỹ thuật và âm thanh, dành cho những ai yêu vẻ đẹp cổ điển và thủ công. ✨ Một tác phẩm nghệ thuật hơn là một nhạc cụ — Thanh Hà, đoá sen giữa lòng âm nhạc.",
+        category: "Guzheng"
+    },
+
+    {
+        id: 5,
+        name: "Nhật Nguyệt Cầm",
+        oldPrice: "15.000.000₫",
+        newPrice: "7.500.000₫",
+        image: images.guzhengHuyenDong9,
+        hoverImage: images.guzhengHuyenDong10,
+        description: "Hai em Guzheng dòng 1m25 Huyền Đồng – âm thanh ấm, ngân vang cực hay ✨",
+        category: "Guzheng"
+    },
+
+    {
+        id: 6,
+        name: "Viêm Sơn Hành Cầm",
+        oldPrice: "15.000.000₫",
+        newPrice: "7.500.000₫",
+        image: images.guzhengHuyenDong11,
+        hoverImage: images.guzhengHuyenDong12,
+        description: "“Đàn hành giữa núi lửa”, thể hiện sức sống và tinh thần mạnh mẽ",
+        category: "Guzheng"
+    },
+
+    {
+        id: 7,
+        name: "Minh Hạc Dương Cầm",
+        oldPrice: "15.000.000₫",
+        newPrice: "7.500.000₫",
+        image: images.guzhengHuyenDong13,
+        hoverImage: images.guzhengHuyenDong14,
+        description: "“Đàn hạc sáng dưới dương nhật”, nghe nhẹ và thanh tao",
+        category: "Guzheng"
+    },
+
+    // Đàn Tranh Việt Nam
+    {
+        id: 10,
         name: "Đàn tranh Koto Gõ Đỏ",
-        price: "4.000.000₫",
+        price: "5.000.000₫",
         image: "https://static.wixstatic.com/media/d86b8e_9957680edf604c08a90fbf072f345df4~mv2.webp/v1/fill/w_1024,h_827,al_c,q_85,enc_avif,quality_auto/d86b8e_9957680edf604c08a90fbf072f345df4~mv2.webp",
         hoverImage: "https://static.wixstatic.com/media/d86b8e_0b573594509a48a4bbcce679afdbb553~mv2.webp/v1/fill/w_1024,h_827,al_c,q_85,enc_avif,quality_auto/d86b8e_0b573594509a48a4bbcce679afdbb553~mv2.webp",
         description: "Đàn tranh lai koto gỗ Gõ Đỏ bên xưởng mình vừa mới ra thêm loại này âm thanh rất hay ❤️ chỉ sau cẩm lai xíu thui😄, loại gỗ này cũng có vân gỗ luôn nha cả nhà lên màu tự nhiên khá đẹp 😍 Quà Tặng: Móng sắt và bao đàn xịn",
         category: "Dan Tranh"
     },
     {
-        id: 2,
-        name: "Đàn tranh Cẩm Lai",
-        price: "6.000.000₫",
-        image: "https://images.unsplash.com/photo-1680792563719-288027b2a090?q=80&w=2787&auto=format&fit=crop",
-        description: "Đàn tranh gỗ cẩm lai cao cấp, họa tiết tinh xảo.",
-        category: "Dan Tranh"
-    },
-    {
-        id: 3,
-        name: "Dây đàn tranh Việt Nam Yến Oanh Ân 17 dây loại tốt nhất",
-        price: "75.000₫",
-        image: "https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=2940&auto=format&fit=crop",
-        description: "Dây đàn tranh 17 dây chất lượng cao, âm thanh trong trẻo.",
-        category: "Accessories"
-    },
-    
-    // Guzheng (Cổ Tranh) - Fullsize
-    {
-        id: 4,
-        name: "Đàn cổ tranh, guzheng 1m35 Huyền Đồng dòng siêu cao cấp chất âm rất vang, trầm",
-        price: "11.499.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng 1m35 Huyền Đồng dòng siêu cao cấp, chất âm rất vang và trầm.",
-        category: "Guzheng"
-    },
-    {
-        id: 5,
-        name: "Guzheng ( cổ tranh ) fullsize 1m63 Huyền Đồng dòng cao cấp âm hay",
-        price: "7.490.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng fullsize 1m63 Huyền Đồng dòng cao cấp, âm thanh hay.",
-        category: "Guzheng"
-    },
-    {
-        id: 6,
-        name: "Guzheng ( cổ tranh ) fullsize 1m63 Tuệ Âm dòng full size âm hay hàng hiệu giá rẻ",
-        price: "4.231.080₫",
-        originalPrice: "4.599.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng fullsize 1m63 Tuệ Âm dòng full size âm hay, hàng hiệu giá rẻ.",
-        category: "Guzheng",
-        onSale: true
-    },
-    {
-        id: 7,
-        name: "Đàn cổ tranh, guzheng fullsize 1m63 Thiên Đồng dòng full âm hay giá rẻ",
-        price: "4.231.080₫",
-        originalPrice: "4.599.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng fullsize 1m63 Thiên Đồng dòng full âm hay, giá rẻ.",
-        category: "Guzheng",
-        onSale: true
-    },
-    
-    // Guzheng (Cổ Tranh) - Mini
-    {
-        id: 8,
-        name: "Guzheng ( cổ tranh ) mini 1m25 thương hiệu Tuệ Âm dòng cao cấp âm hay",
-        price: "5.320.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng mini 1m25 Tuệ Âm dòng cao cấp, âm thanh hay.",
-        category: "Guzheng"
-    },
-    {
-        id: 9,
-        name: "Đàn cổ tranh (guzheng) mini 1m Huyền Đồng dòng cao cấp âm hay siêu vang",
-        price: "6.290.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng mini 1m Huyền Đồng dòng cao cấp, âm thanh siêu vang.",
-        category: "Guzheng"
-    },
-    {
-        id: 10,
-        name: "Đàn cổ tranh ( guzheng ) mini 1m Tuệ Âm dòng mini âm hay giá siêu hạt dẻ",
-        price: "3.980.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng mini 1m Tuệ Âm dòng mini âm hay, giá siêu hạt dẻ.",
-        category: "Guzheng"
-    },
-    {
         id: 11,
-        name: "Đàn cổ tranh , guzheng mini 1m25 Thiên Đồng dòng mini âm hay giá rẻ",
-        price: "4.250.000₫",
-        image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2940&auto=format&fit=crop",
-        description: "Guzheng mini 1m25 Thiên Đồng dòng mini âm hay, giá rẻ.",
-        category: "Guzheng"
-    },
-    
-    // Phụ kiện - Móng
-    {
-        id: 12,
-        name: "Móng Guzheng 8 Móng Xanh Âm Cực Hay",
-        price: "150.000₫",
-        image: "https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=2940&auto=format&fit=crop",
-        description: "Bộ móng Guzheng 8 móng màu xanh, âm cực hay.",
-        category: "Accessories"
-    },
-    {
-        id: 13,
-        name: "Móng cổ tranh - Guzheng sơn thuỷ loại cao cấp giảm tạp âm, dễ vê dây (kèm hộp đựng)",
-        price: "128.000₫",
-        image: "https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=2940&auto=format&fit=crop",
-        description: "Móng cổ tranh - Guzheng sơn thuỷ loại cao cấp, giảm tạp âm, dễ vê dây, kèm hộp đựng.",
-        category: "Accessories"
+        name: "Đàn tranh Cẩm Lai",
+        price: "6.500.000₫",
+        image: "https://static.wixstatic.com/media/d86b8e_8d4cd1bcce1549109c2ebf1b15006b64~mv2.webp/v1/fill/w_1024,h_827,al_c,q_85,enc_avif,quality_auto/d86b8e_8d4cd1bcce1549109c2ebf1b15006b64~mv2.webp",
+        hoverImage: "https://static.wixstatic.com/media/d86b8e_7e0c32b2f2654e1dbbb552f491a898de~mv2.webp/v1/fill/w_1024,h_827,al_c,q_85,enc_avif,quality_auto/d86b8e_7e0c32b2f2654e1dbbb552f491a898de~mv2.webp",
+        description: "Đàn tranh được làm bằng chất liệu gỗ Cẩm Lai, rất quí và bền. Âm thanh rất hay đánh càng lâu âm lại càng hay hơn. Hôm nào mình sẽ test âm cho người nghe thử nha 😉😉😉 Quà Tặng: Móng sắt và bao đàn xịn.",
+        category: "Dan Tranh"
     },
     
     // Phụ kiện - Khác
@@ -121,7 +114,7 @@ export const products = [
         id: 14,
         name: "Khoá lên dây đàn cổ tranh (guzheng) loại chuyên dụng",
         price: "70.000₫",
-        image: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=2940&auto=format&fit=crop",
+        image: "https://static.wixstatic.com/media/d86b8e_363a415fe7ed4fa79627d358c6ffe508~mv2.webp/v1/fill/w_800,h_800,al_c,q_85,enc_avif,quality_auto/d86b8e_363a415fe7ed4fa79627d358c6ffe508~mv2.webp",
         description: "Khoá lên dây đàn cổ tranh loại chuyên dụng, chất lượng cao.",
         category: "Accessories"
     },
@@ -129,7 +122,8 @@ export const products = [
         id: 15,
         name: "Ghế đôn guzheng (cổ tranh) chuyên dụng ngồi đàn phù hợp chiều cao",
         price: "659.000₫",
-        image: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=2940&auto=format&fit=crop",
+        image: "https://static.wixstatic.com/media/d86b8e_174dec85c80a4e8cb351c57a4fd29b13~mv2.webp/v1/fill/w_800,h_800,al_c,q_85,enc_avif,quality_auto/d86b8e_174dec85c80a4e8cb351c57a4fd29b13~mv2.webp",
+        hoverImage: "https://static.wixstatic.com/media/d86b8e_ae0605a7e2794b6894677d78ec9532a0~mv2.webp/v1/fill/w_800,h_800,al_c,q_85,enc_avif,quality_auto/d86b8e_ae0605a7e2794b6894677d78ec9532a0~mv2.webp",
         description: "Ghế đôn guzheng chuyên dụng, phù hợp chiều cao khi ngồi đàn.",
         category: "Accessories"
     },
@@ -137,7 +131,8 @@ export const products = [
         id: 16,
         name: "Thẻ dán móng băng quấn ( keo ) guzheng tiện dụng giúp thao tác tháo móng đeo vào",
         price: "69.000₫",
-        image: "https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=2940&auto=format&fit=crop",
+        image: "https://static.wixstatic.com/media/d86b8e_4fb51fce198144d48e6a8096ec68a8f1~mv2.webp/v1/fill/w_799,h_645,al_c,q_85,enc_avif,quality_auto/d86b8e_4fb51fce198144d48e6a8096ec68a8f1~mv2.webp",
+        hoverImage: "https://static.wixstatic.com/media/d86b8e_3c8f69aa14e34230bbe755521b71d8fd~mv2.webp/v1/fill/w_800,h_646,al_c,q_85,enc_avif,quality_auto/d86b8e_3c8f69aa14e34230bbe755521b71d8fd~mv2.webp",
         description: "Thẻ dán móng băng quấn (keo) guzheng tiện dụng, giúp thao tác tháo móng đeo vào dễ dàng.",
         category: "Accessories"
     }

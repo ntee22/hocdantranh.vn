@@ -2,6 +2,37 @@
     padding-bottom: 4rem;
 }
 
+.sheet-music-page .page-header {
+    background-image: url('https://static.wixstatic.com/media/d86b8e_2efd42851c4d41d294f7e8cb7e5b72f2~mv2.jpg/v1/crop/x_0,y_146,w_1440,h_517/fill/w_1439,h_517,al_c,q_85,enc_avif,quality_auto/356263541_637546201725781_5280633117493115264_n.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 4rem 20px;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.sheet-music-page .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+}
+
+.sheet-music-page .page-header h1,
+.sheet-music-page .page-header p {
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 .sheets-container {
     max-width: 900px;
     margin: 0 auto;
@@ -216,6 +247,20 @@
 }
 
 @media screen and (max-width: 600px) {
+    .sheet-music-page .page-header {
+        padding: 2rem 20px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .sheet-music-page .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .sheet-music-page .page-header p {
+        font-size: 1rem;
+    }
+
     .sheet-item {
         flex-direction: column;
         text-align: center;

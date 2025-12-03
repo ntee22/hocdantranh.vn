@@ -14,8 +14,8 @@ const Footer = () => {
                 <div className="footer-section">
                     <h3>Liên Hệ</h3>
                     <p><Phone size={16} /> 094 436 40 16 (Đan Thanh)</p>
-                    <p><MapPin size={16} /> 383/3/15A Quang Trung, Phường 10, Gò Vấp, Hồ Chí Minh, Vietnam</p>
-                    <p style={{ fontSize: '0.9rem', color: '#888' }}>Cách mặt tiền 50m, xe hơi vào được</p>
+                    <p><MapPin size={16} /> <strong>383/3/15A Quang Trung, phường 10, quận Gò Vấp</strong></p>
+                    <p style={{ marginTop: '0.5rem' }}><MapPin size={16} /> <strong>254/21/1 Âu Cơ, phường 9, quận Tân Bình</strong></p>
                 </div>
 
                 <div className="footer-section">

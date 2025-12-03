@@ -4,13 +4,46 @@ import Card from '../components/UI/Card';
 import Button from '../components/UI/Button';
 import { products } from '../data/products';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO/SEO';
 import './Home.css';
 
 const Home = () => {
   const featuredProducts = products.slice(0, 3);
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "MusicSchool",
+    "name": "Học Đàn Tranh - Guzheng Đan Thanh",
+    "description": "Học đàn tranh, guzheng, cổ tranh tại HCM. Đan Thanh Đàn Tranh cung cấp đàn tranh Việt Nam, guzheng chất lượng cao, sheet nhạc miễn phí.",
+    "url": "https://hocdantranh.vn",
+    "telephone": "0944364016",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "383/3/15A Quang Trung, Phường 10",
+      "addressLocality": "Gò Vấp",
+      "addressRegion": "Hồ Chí Minh",
+      "addressCountry": "VN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "10.829317",
+      "longitude": "106.6697262"
+    },
+    "openingHours": "Mo-Su 09:00-20:00",
+    "priceRange": "$$",
+    "image": "https://hocdantranh.vn/favicon.png"
+  };
+
   return (
-    <div className="home-page">
+    <>
+      <SEO
+        title="Học Đàn Tranh - Guzheng - Cổ Tranh Đan Thanh | HCM | Học Đàn Tranh HCM"
+        description="Học đàn tranh, guzheng, cổ tranh tại HCM. Đan Thanh Đàn Tranh cung cấp đàn tranh Việt Nam, guzheng chất lượng cao, sheet nhạc miễn phí. Địa chỉ: 383/3/15A Quang Trung, Gò Vấp, HCM."
+        keywords="dan tranh, hoc dan tranh, guzheng, co tranh, dan tranh hcm, guzheng hcm, học đàn tranh, đàn tranh việt nam, cổ tranh, đàn tranh gò vấp, đàn tranh sài gòn"
+        url="https://hocdantranh.vn"
+        structuredData={structuredData}
+      />
+      <div className="home-page">
       <Hero />
 
       <section className="featured-section">
@@ -76,17 +109,19 @@ const Home = () => {
             <p><strong>Tất cả các ngày trong tuần</strong></p>
             <p>Từ thứ 2 đến Chủ Nhật</p>
             <p>9h sáng đến 20h tối</p>
+            <p>Các lớp online mở liên tục để bạn có thể học bất cứ đâu! Hãy liên hệ mình ngay nhé 🤗</p>
           </div>
 
           <div className="info-card">
             <h2>ĐỊA CHỈ LỚP HỌC</h2>
-            <p>383/3/15A Quang Trung, Phường 10, Gò Vấp, Hồ Chí Minh, Vietnam</p>
-            <p>Cách mặt tiền 50m, xe hơi vào được</p>
+            <p><strong>383/3/15A Quang Trung, phường 10, quận Gò Vấp</strong></p>
+            <p style={{ marginTop: '1.5rem' }}><strong>254/21/1 Âu Cơ, phường 9, quận Tân Bình</strong></p>
             <p><strong>SĐT: 094 436 40 16 (Đan Thanh)</strong></p>
           </div>
         </div>
       </section>
     </div>
+    </>
   );
 };
 

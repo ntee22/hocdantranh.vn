@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { sheets } from '../data/sheets';
 import { FileText, Eye, ArrowLeft } from 'lucide-react';
+import SEO from '../components/SEO/SEO';
 import './SheetMusic.css';
 
 const SheetMusic = () => {
@@ -23,7 +24,23 @@ const SheetMusic = () => {
         return `https://ntee22.wixsite.com/hocdantranh/${imageName}`;
     };
 
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Sheet nhạc Guzheng - Đan Thanh Đàn Tranh",
+        "description": "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẻ miễn phí",
+        "url": "https://hocdantranh.vn/sheet-music"
+    };
+
     return (
+        <>
+            <SEO
+                title="Sheet Nhạc Guzheng Miễn Phí | Học Đàn Tranh HCM"
+                description="Tải sheet nhạc guzheng miễn phí. Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẻ miễn phí cho mọi người. Nhiều bài hát từ cơ bản đến trung cấp."
+                keywords="sheet nhac guzheng, sheet nhạc guzheng, sheet nhạc cổ tranh, sheet nhạc đàn tranh, tải sheet nhạc guzheng, sheet nhạc miễn phí"
+                url="https://hocdantranh.vn/sheet-music"
+                structuredData={structuredData}
+            />
         <div className="sheet-music-page">
             <div className="page-header">
                 <h1>Sheet nhạc Guzheng</h1>
@@ -79,18 +96,21 @@ const SheetMusic = () => {
                                 
                                 return (
                                     <div className="modal-images-scroll">
-                                        {images.map((img, index) => (
-                                            <img 
-                                                key={index}
-                                                src={getImageUrl(img)} 
-                                                alt={`${selectedSheet.title} - Page ${index + 1}`}
-                                                className="modal-image"
-                                                onError={(e) => {
-                                                    // Fallback to placeholder if image fails to load
-                                                    e.target.src = `https://via.placeholder.com/800x1000/ffffff/666666?text=${encodeURIComponent(selectedSheet.title + ' - Page ' + (index + 1))}`;
-                                                }}
-                                            />
-                                        ))}
+                                        {images.map((img, index) => {
+                                            const imageUrl = getImageUrl(img);
+                                            return (
+                                                <img 
+                                                    key={imageUrl}
+                                                    src={imageUrl} 
+                                                    alt={`${selectedSheet.title} - Page ${index + 1}`}
+                                className="modal-image"
+                                onError={(e) => {
+                                    // Fallback to placeholder if image fails to load
+                                                        e.target.src = `https://via.placeholder.com/800x1000/ffffff/666666?text=${encodeURIComponent(selectedSheet.title + ' - Page ' + (index + 1))}`;
+                                }}
+                            />
+                                            );
+                                        })}
                                     </div>
                                 );
                             })()}
@@ -99,6 +119,7 @@ const SheetMusic = () => {
                 </div>
             )}
         </div>
+        </>
     );
 };
 

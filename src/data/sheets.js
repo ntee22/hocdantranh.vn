@@ -43,7 +43,7 @@ export const sheets = [
         composer: "Quang Nhật",
         level: "Trung cấp",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "NhoOiSheetGuzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_3b24b2ac337f4136adfd1da0aed9e44f~mv2.jpg/v1/fill/w_915,h_1294,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/NhoOiSheetGuzheng.jpg",
         link: "#"
     },
     {
@@ -52,7 +52,7 @@ export const sheets = [
         composer: "Lý Phát Phát",
         level: "Nâng cao",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "VayCuoiCuaEmGiongNhuBongTuyetSheetGuzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_06c8b7e3a0454904be4f0d45ca1de4d7~mv2.jpg/v1/fill/w_915,h_1294,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/VayCuoiCuaEmGiongNhuBongTuyetSheetGuzheng.jpg",
         link: "#"
     },
     {
@@ -61,7 +61,7 @@ export const sheets = [
         composer: "Nhạc Phật",
         level: "Trung cấp",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "Nhất Thanh Phật Hiệu Nhất Thanh Tâm sheet Guzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_57be85d0634843238fc4cfef3c782633~mv2.jpg/v1/fill/w_915,h_1294,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Nh%E1%BA%A5t%20Thanh%20Ph%E1%BA%ADt%20Hi%E1%BB%87u%20Nh%E1%BA%A5t%20Thanh%20T%C3%A2m%20sheet%20Guzheng.jpg",
         link: "#"
     },
     {
@@ -70,7 +70,7 @@ export const sheets = [
         composer: "Châu Kiệt Luân",
         level: "Nâng cao",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "Sứ Thanh Hoa sheet Guzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_0c3c68d7b5924315be6b893fde3f6398~mv2.jpg/v1/fill/w_915,h_1294,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/S%E1%BB%A9%20Thanh%20Hoa%20sheet%20Guzheng.jpg",
         link: "#"
     },
     {
@@ -97,7 +97,7 @@ export const sheets = [
         composer: "Hoàng Thùy Linh",
         level: "Trung cấp",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "SeeTinhSheetGuzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_0ca44028db094678a4f489fa52a8e73f~mv2.jpg/v1/fill/w_915,h_1294,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/SeeTinhSheetGuzheng.jpg",
         link: "#"
     },
     {
@@ -106,7 +106,7 @@ export const sheets = [
         composer: "Dân ca",
         level: "Cơ bản",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "xinchaovietnamsheetGuzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_9eae467304eb43498db8a27135a6341b~mv2.jpg/v1/fill/w_1200,h_919,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/xinchaovietnamsheetGuzheng.jpg",
         link: "#"
     },
     {
@@ -115,7 +115,7 @@ export const sheets = [
         composer: "Dân ca",
         level: "Trung cấp",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "Nụ Hồng Mong Manh Sheet Guzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_e3434028bdb747e790eb7db89e45b7a7~mv2.jpg/v1/fill/w_915,h_1294,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/N%E1%BB%A5%20H%E1%BB%93ng%20Mong%20Manh%20Sheet%20Guzheng.jpg",
         link: "#"
     },
     {
@@ -124,7 +124,7 @@ export const sheets = [
         composer: "Dân ca",
         level: "Cơ bản",
         description: "Sheet nhạc Guzheng được Đan Thanh Đàn Tranh biên soạn và chia sẽ miễn phí cho mọi người",
-        image: "Chuc Tet sheet Guzheng.jpg",
+        image: "https://static.wixstatic.com/media/d86b8e_d79920676d404faaaeadf54a4883794d~mv2.jpg/v1/fill/w_1199,h_1010,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Chuc%20Tet%20sheet%20Guzheng.jpg",
         link: "#"
     }
 ];
