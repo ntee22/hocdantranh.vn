@@ -8,59 +8,116 @@
  * @param {Object} student - Student object
  * @param {string|null} student.end_date - End date string (ISO format) or null
  * @param {number|null} student.sessions_left - Number of sessions left or null
- * @returns {string} - Status: 'critical', 'warning', or 'normal'
+ * @returns {Object} - { status: 'critical'|'warning'|'normal', reason: string }
  */
 export const computeStudentStatus = (student) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
 
-  // Check sessions_left
-  const sessionsLeft = student.sessions_left;
-  if (sessionsLeft !== null && sessionsLeft !== undefined) {
-    if (sessionsLeft <= 0) {
-      return 'critical';
-    }
-    if (sessionsLeft >= 1 && sessionsLeft <= 2) {
-      // If sessions_left is warning, but we still need to check end_date
-      // We'll check end_date below and return the more critical status
-    }
-  }
+  let daysUntilEnd = null;
+  let sessionsLeft = student.sessions_left !== null && student.sessions_left !== undefined 
+    ? student.sessions_left 
+    : null;
 
-  // Check end_date
+  // Calculate days until end date
   if (student.end_date) {
     try {
       const endDate = new Date(student.end_date);
-      endDate.setHours(0, 0, 0, 0); // Reset time to start of day
-
-      // Calculate days until end date
-      const daysUntilEnd = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-
-      // Critical: end_date is in the past
-      if (daysUntilEnd < 0) {
-        return 'critical';
-      }
-
-      // Warning: end_date is within next 7 days
-      if (daysUntilEnd >= 0 && daysUntilEnd <= 7) {
-        // If sessions_left is also warning, return warning
-        // If sessions_left is critical (already handled above), return critical
-        return 'warning';
+      // Check if date is valid
+      if (isNaN(endDate.getTime())) {
+        console.warn('Invalid end_date:', student.end_date);
+        daysUntilEnd = null;
+      } else {
+        endDate.setHours(0, 0, 0, 0); // Reset time to start of day
+        daysUntilEnd = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+        
+        // Debug logging for troubleshooting - log all cases to help diagnose
+        console.log('Student status calculation:', {
+          studentName: student.name,
+          end_date: student.end_date,
+          parsedEndDate: endDate.toISOString(),
+          today: today.toISOString(),
+          daysUntilEnd,
+          sessionsLeft,
+          willBeCritical: daysUntilEnd <= 1 || (sessionsLeft !== null && sessionsLeft <= 1)
+        });
       }
     } catch (error) {
-      console.error('Error parsing end_date:', error);
-      // If date parsing fails, continue with other checks
+      console.error('Error parsing end_date:', error, student.end_date);
+      daysUntilEnd = null;
     }
   }
 
-  // Check sessions_left for warning (if end_date didn't trigger warning)
-  if (sessionsLeft !== null && sessionsLeft !== undefined) {
-    if (sessionsLeft >= 1 && sessionsLeft <= 2) {
-      return 'warning';
+  // Check for critical status: daysUntilEnd <= 1 OR sessionsLeft <= 1
+  // Note: daysUntilEnd can be negative (past date), which should also be critical
+  const isCriticalDays = daysUntilEnd !== null && daysUntilEnd <= 1;
+  const isCriticalSessions = sessionsLeft !== null && sessionsLeft <= 1;
+  
+  if (isCriticalDays || isCriticalSessions) {
+    // If both are critical, show the most urgent one
+    if (isCriticalDays && isCriticalSessions) {
+      // Show the one with lower value
+      if (daysUntilEnd <= sessionsLeft) {
+        return {
+          status: 'critical',
+          reason: `Còn ${daysUntilEnd} ngày đến ngày kết thúc`
+        };
+      } else {
+        return {
+          status: 'critical',
+          reason: `Còn ${sessionsLeft} buổi học`
+        };
+      }
+    } else if (isCriticalDays) {
+      return {
+        status: 'critical',
+        reason: `Còn ${daysUntilEnd} ngày đến ngày kết thúc`
+      };
+    } else {
+      return {
+        status: 'critical',
+        reason: `Còn ${sessionsLeft} buổi học`
+      };
+    }
+  }
+
+  // Check for warning status: daysUntilEnd <= 3 OR sessionsLeft <= 3
+  const isWarningDays = daysUntilEnd !== null && daysUntilEnd <= 3;
+  const isWarningSessions = sessionsLeft !== null && sessionsLeft <= 3;
+  
+  if (isWarningDays || isWarningSessions) {
+    // If both are warning, show the most urgent one
+    if (isWarningDays && isWarningSessions) {
+      // Show the one with lower value
+      if (daysUntilEnd <= sessionsLeft) {
+        return {
+          status: 'warning',
+          reason: `Còn ${daysUntilEnd} ngày đến ngày kết thúc`
+        };
+      } else {
+        return {
+          status: 'warning',
+          reason: `Còn ${sessionsLeft} buổi học`
+        };
+      }
+    } else if (isWarningDays) {
+      return {
+        status: 'warning',
+        reason: `Còn ${daysUntilEnd} ngày đến ngày kết thúc`
+      };
+    } else {
+      return {
+        status: 'warning',
+        reason: `Còn ${sessionsLeft} buổi học`
+      };
     }
   }
 
   // Default: normal status
-  return 'normal';
+  return {
+    status: 'normal',
+    reason: null
+  };
 };
 
 /**
@@ -91,7 +148,7 @@ export const filterStudentsByStatus = (students, statusFilter) => {
   }
 
   return students.filter(student => {
-    const status = computeStudentStatus(student);
+    const { status } = computeStudentStatus(student);
     return status === statusFilter;
   });
 };
@@ -110,8 +167,8 @@ export const sortStudentsByStatus = (students) => {
   };
 
   return [...students].sort((a, b) => {
-    const statusA = computeStudentStatus(a);
-    const statusB = computeStudentStatus(b);
+    const { status: statusA } = computeStudentStatus(a);
+    const { status: statusB } = computeStudentStatus(b);
     return statusPriority[statusA] - statusPriority[statusB];
   });
 };

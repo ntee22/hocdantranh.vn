@@ -56,8 +56,9 @@ const Navbar = () => {
                                 to="/teacher"
                                 className={`nav-links ${location.pathname === '/teacher' ? 'active-link' : ''}`}
                                 onClick={handleLinkClick}
+                                title="Giáo viên"
                             >
-                                Giáo viên
+                                🎶
                             </Link>
                         </li>
                     )}

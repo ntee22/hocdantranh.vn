@@ -16,27 +16,8 @@ const Login = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Check localStorage first for quick check
-        const storedSession = typeof window !== 'undefined' 
-          ? localStorage.getItem('sb-auth-token') 
-          : null;
-        
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error checking session:', error);
-          // If there's a stored session but getSession failed, wait and retry
-          if (storedSession) {
-            setTimeout(async () => {
-              const { data: { session: retrySession } } = await supabase.auth.getSession();
-              if (retrySession && window.location.pathname === '/login') {
-                navigate('/teacher', { replace: true });
-              }
-            }, 200);
-            return;
-          }
-        }
-        
+        const { data: { session } } = await supabase.auth.getSession();
+
         if (session && window.location.pathname === '/login') {
           // User is already logged in, redirect to teacher dashboard
           navigate('/teacher', { replace: true });
@@ -45,18 +26,8 @@ const Login = () => {
         console.error('Error in checkSession:', err);
       }
     };
-    
+
     checkSession();
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session && window.location.pathname === '/login') {
-        // User logged in, redirect to teacher dashboard
-        navigate('/teacher', { replace: true });
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const validateForm = () => {
@@ -90,21 +61,24 @@ const Login = () => {
     setLoading(true);
 
     try {
+      console.log('Login: Attempting sign in...');
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password,
       });
 
+      console.log('Login: Sign in response:', { hasUser: !!data?.user, hasError: !!authError });
+
       if (authError) {
         setError(authError.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
         setLoading(false);
       } else if (data?.user) {
-        // Wait a moment for session to be fully established, then navigate
-        // This ensures the session is in localStorage before ProtectedRoute checks it
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // Session is established, navigate to teacher dashboard
+        console.log('Login: Navigating to /teacher');
         navigate('/teacher', { replace: true });
       }
     } catch (err) {
+      console.error('Login: Error during sign in:', err);
       setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
       setLoading(false);
     }

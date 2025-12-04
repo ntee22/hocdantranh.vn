@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, History, Search, CheckCircle } from 'lucide-react';
 import { supabase } from '../supabaseClient';
@@ -36,9 +36,10 @@ const TeacherDashboard = () => {
     total_paid: '',
     branch: ''
   });
+  const [endDateWarning, setEndDateWarning] = useState('');
   const navigate = useNavigate();
 
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     if (!user) {
       console.log('fetchStudents: No user, setting loading to false');
       setLoading(false);
@@ -64,9 +65,9 @@ const TeacherDashboard = () => {
       const { data: studentsDataRaw, error: studentsError } = await query
         .order('start_date', { ascending: false });
 
-      console.log('fetchStudents: Query completed', { 
-        dataLength: studentsDataRaw?.length, 
-        error: studentsError?.message 
+      console.log('fetchStudents: Query completed', {
+        dataLength: studentsDataRaw?.length,
+        error: studentsError?.message
       });
 
       if (studentsError) {
@@ -80,7 +81,7 @@ const TeacherDashboard = () => {
       const studentsData = studentsDataRaw || [];
       console.log('fetchStudents: Setting students, count:', studentsData.length);
       setStudents(studentsData);
-      
+
       // Filtering will be applied in useEffect
     } catch (err) {
       console.error('Error fetching students:', err);
@@ -90,16 +91,16 @@ const TeacherDashboard = () => {
       console.log('fetchStudents: Setting loading to false');
       setLoading(false);
     }
-  };
+  }, [user, isSuperAdmin]);
 
   useEffect(() => {
-    console.log('TeacherDashboard useEffect:', { 
-      profileLoading, 
-      hasUser: !!user, 
-      userId: user?.id, 
-      isSuperAdmin 
+    console.log('TeacherDashboard useEffect:', {
+      profileLoading,
+      hasUser: !!user,
+      userId: user?.id,
+      isSuperAdmin
     });
-    
+
     if (!profileLoading) {
       if (user) {
         console.log('TeacherDashboard: Calling fetchStudents');
@@ -111,12 +112,12 @@ const TeacherDashboard = () => {
     } else {
       console.log('TeacherDashboard: Still loading profile, waiting...');
     }
-  }, [user, profileLoading, isSuperAdmin]);
+  }, [user, profileLoading, isSuperAdmin, fetchStudents]);
 
   // Apply status filter and search when they change
   useEffect(() => {
     let filtered = filterStudentsByStatus(students, statusFilter);
-    
+
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.trim().toLowerCase();
@@ -125,7 +126,7 @@ const TeacherDashboard = () => {
         return name.toLowerCase().includes(query);
       });
     }
-    
+
     // Sort by status priority (critical first)
     const sorted = sortStudentsByStatus(filtered);
     setFilteredStudents(sorted);
@@ -178,21 +179,40 @@ const TeacherDashboard = () => {
       branch: profile?.branch || ''
     });
     setFormError('');
+    setEndDateWarning('');
     setShowModal(true);
   };
 
   const openEditModal = (student) => {
     setEditingStudent(student);
+    const endDateValue = student.end_date ? student.end_date.split('T')[0] : '';
     setFormData({
       name: student.name || '',
       phone: student.phone || '',
       start_date: student.start_date ? student.start_date.split('T')[0] : '',
-      end_date: student.end_date ? student.end_date.split('T')[0] : '',
+      end_date: endDateValue,
       sessions_left: student.sessions_left !== null && student.sessions_left !== undefined ? student.sessions_left : '',
       total_paid: student.total_paid !== null && student.total_paid !== undefined ? student.total_paid : '',
       branch: student.branch || ''
     });
     setFormError('');
+    
+    // Validate end_date if it exists and is in the past
+    if (endDateValue) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(endDateValue);
+      selectedDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        setEndDateWarning('Cảnh báo: Ngày kết thúc đã qua. Vui lòng chọn ngày trong tương lai.');
+      } else {
+        setEndDateWarning('');
+      }
+    } else {
+      setEndDateWarning('');
+    }
+    
     setShowModal(true);
   };
 
@@ -200,6 +220,7 @@ const TeacherDashboard = () => {
     setShowModal(false);
     setEditingStudent(null);
     setFormError('');
+    setEndDateWarning('');
   };
 
   const openHistoryModal = (student) => {
@@ -214,8 +235,8 @@ const TeacherDashboard = () => {
 
   const handleCheckin = async (student) => {
     // Check if student has remaining sessions
-    const currentSessions = student.sessions_left !== null && student.sessions_left !== undefined 
-      ? student.sessions_left 
+    const currentSessions = student.sessions_left !== null && student.sessions_left !== undefined
+      ? student.sessions_left
       : 0;
 
     if (currentSessions <= 0) {
@@ -273,6 +294,23 @@ const TeacherDashboard = () => {
       ...prev,
       [name]: value
     }));
+    setFormError('');
+    
+    // Validate end_date if it's being changed
+    if (name === 'end_date' && value) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(value);
+      selectedDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        setEndDateWarning('Cảnh báo: Ngày kết thúc đã qua. Vui lòng chọn ngày trong tương lai.');
+      } else {
+        setEndDateWarning('');
+      }
+    } else if (name === 'end_date' && !value) {
+      setEndDateWarning('');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -311,7 +349,7 @@ const TeacherDashboard = () => {
           .from('students')
           .update(studentData)
           .eq('id', editingStudent.id);
-        
+
         // If not superadmin, ensure they can only update their own students
         if (!isSuperAdmin) {
           updateQuery = updateQuery.eq('teacher_id', user.id);
@@ -380,9 +418,9 @@ const TeacherDashboard = () => {
                 {isSuperAdmin ? 'Trang Quản Trị' : 'Trang Giáo Viên'}
               </h1>
               <p className="teacher-dashboard-subtitle">
-                {profile?.full_name 
+                {profile?.full_name
                   ? `Xin chào, ${profile.full_name}${profile.role ? ` - ${profile.role === 'teacher' ? 'Giáo viên' : profile.role === 'superadmin' ? 'Quản trị viên' : profile.role}` : ''}`
-                  : user?.email 
+                  : user?.email
                     ? `Xin chào, ${user.email}`
                     : 'Chào mừng bạn đến với trang quản lý'}
               </p>
@@ -464,9 +502,9 @@ const TeacherDashboard = () => {
                 {filteredStudents.length === 0 ? (
                   <div className="empty-state">
                     <p>
-                      {students.length === 0 
-                        ? 'Chưa có học sinh nào trong danh sách.' 
-                        : searchQuery.trim() 
+                      {students.length === 0
+                        ? 'Chưa có học sinh nào trong danh sách.'
+                        : searchQuery.trim()
                           ? `Không tìm thấy học sinh nào với từ khóa "${searchQuery}".`
                           : 'Không tìm thấy học sinh nào với bộ lọc đã chọn.'}
                     </p>
@@ -489,7 +527,7 @@ const TeacherDashboard = () => {
                       </thead>
                       <tbody>
                         {filteredStudents.map((student) => {
-                          const status = computeStudentStatus(student);
+                          const { status, reason } = computeStudentStatus(student);
                           return (
                             <tr key={student.id}>
                               <td className="col-name">{student.name || '-'}</td>
@@ -500,19 +538,19 @@ const TeacherDashboard = () => {
                               <td className="col-paid">{formatCurrency(student.total_paid)}</td>
                               <td className="col-branch">{student.branch || '-'}</td>
                               <td className="col-status">
-                                <StatusBadge status={status} />
+                                <StatusBadge status={status} reason={reason} />
                               </td>
                               <td className="col-actions">
                                 <div className="action-buttons">
-                                  <Button 
-                                    onClick={() => openHistoryModal(student)} 
-                                    variant="text" 
+                                  <Button
+                                    onClick={() => openHistoryModal(student)}
+                                    variant="text"
                                     className="history-button"
                                     title="Xem lịch sử"
                                   >
                                     <History size={18} />
                                   </Button>
-                                  <Button 
+                                  <Button
                                     onClick={() => handleCheckin(student)}
                                     variant="text"
                                     className="checkin-button"
@@ -521,8 +559,8 @@ const TeacherDashboard = () => {
                                       checkinLoading[student.id]
                                     }
                                     title={
-                                      student.sessions_left <= 0 
-                                        ? 'Học sinh không còn buổi học' 
+                                      student.sessions_left <= 0
+                                        ? 'Học sinh không còn buổi học'
                                         : 'Check-in học sinh'
                                     }
                                   >
@@ -535,9 +573,9 @@ const TeacherDashboard = () => {
                                       </>
                                     )}
                                   </Button>
-                                  <Button 
-                                    onClick={() => openEditModal(student)} 
-                                    variant="text" 
+                                  <Button
+                                    onClick={() => openEditModal(student)}
+                                    variant="text"
                                     className="edit-button"
                                   >
                                     Sửa
@@ -633,9 +671,14 @@ const TeacherDashboard = () => {
                         name="end_date"
                         value={formData.end_date}
                         onChange={handleInputChange}
-                        className="form-input"
+                        className={`form-input ${endDateWarning ? 'form-input-warning' : ''}`}
                         disabled={formLoading}
                       />
+                      {endDateWarning && (
+                        <div className="form-warning-message">
+                          {endDateWarning}
+                        </div>
+                      )}
                     </div>
                   </div>
 

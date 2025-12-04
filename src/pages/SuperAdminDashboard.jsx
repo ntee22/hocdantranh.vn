@@ -317,7 +317,7 @@ const SuperAdminDashboard = () => {
                       </thead>
                       <tbody>
                         {filteredStudents.map((student) => {
-                          const status = computeStudentStatus(student);
+                          const { status, reason } = computeStudentStatus(student);
                           return (
                             <tr key={student.id}>
                               <td className="col-name">{student.name || '-'}</td>
@@ -329,7 +329,7 @@ const SuperAdminDashboard = () => {
                               <td className="col-sessions">{student.sessions_left !== null && student.sessions_left !== undefined ? student.sessions_left : '-'}</td>
                               <td className="col-paid">{formatCurrency(student.total_paid)}</td>
                               <td className="col-status">
-                                <StatusBadge status={status} />
+                                <StatusBadge status={status} reason={reason} />
                               </td>
                               <td className="col-actions">
                                 <Button 

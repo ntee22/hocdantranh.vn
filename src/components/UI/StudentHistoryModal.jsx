@@ -24,9 +24,10 @@ const StudentHistoryModal = ({ isOpen, student, onClose }) => {
   // Refetch logs when modal opens or student changes
   React.useEffect(() => {
     if (isOpen && student?.id) {
+      // Only refetch if modal just opened or student changed
       refetch();
     }
-  }, [isOpen, student?.id, refetch]);
+  }, [isOpen, student?.id]); // Removed refetch from dependencies to prevent infinite loop
 
   if (!isOpen) return null;
 

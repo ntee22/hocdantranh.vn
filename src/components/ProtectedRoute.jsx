@@ -12,78 +12,65 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     // Reset resolvedRef when component mounts (new route)
     resolvedRef.current = false;
-    
+
     let mounted = true;
-    let timeouts = [];
+    let timeout = null;
     let subscription = null;
 
-    const clearAllTimeouts = () => {
-      timeouts.forEach(timeout => clearTimeout(timeout));
-      timeouts = [];
-    };
-
     const updateAuthState = (hasSession) => {
-      if (!mounted) return;
-      
-      // Always clear loading and update state
+      if (!mounted || resolvedRef.current) return;
+
+      // Mark as resolved and update state
       resolvedRef.current = true;
-      clearAllTimeouts();
-      
+      if (timeout) clearTimeout(timeout);
+
       setIsAuthenticated(hasSession);
       setLoading(false);
-      
+
       if (!hasSession && window.location.pathname !== '/login') {
         navigate('/login', { replace: true });
       }
     };
 
-    // Direct session check
-    const checkSession = async () => {
+    // Set up auth state change listener - this handles auth state changes
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      console.log('ProtectedRoute: Auth state change:', event, 'hasSession:', !!session);
+      updateAuthState(!!session);
+    });
+    subscription = authSubscription;
+
+    // Initial session check - this handles the case when user is already logged in
+    const checkInitialSession = async () => {
       if (!mounted || resolvedRef.current) return;
-      
+
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (!mounted) return;
-
-        if (error) {
-          console.error('Error checking session:', error);
-          updateAuthState(false);
-        } else {
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('ProtectedRoute: Initial session check, hasSession:', !!session);
+        if (mounted && !resolvedRef.current) {
           updateAuthState(!!session);
         }
       } catch (err) {
-        console.error('Error in checkSession:', err);
+        console.error('Error checking initial session:', err);
         if (mounted && !resolvedRef.current) {
           updateAuthState(false);
         }
       }
     };
 
-    // Set up auth state change listener FIRST - this is the primary way
-    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
-      
-      const hasSession = !!session;
-      updateAuthState(hasSession);
-    });
-    subscription = authSubscription;
+    checkInitialSession();
 
-    // Initial check
-    checkSession();
-
-    // Fallback: Force resolve after 2 seconds maximum
-    const timeout = setTimeout(() => {
+    // Fallback: If neither auth listener nor initial check resolves within 3 seconds
+    timeout = setTimeout(() => {
       if (mounted && !resolvedRef.current) {
-        console.warn('ProtectedRoute: Force resolving after timeout');
-        checkSession();
+        console.warn('ProtectedRoute: Timeout, forcing session check');
+        checkInitialSession();
       }
-    }, 2000);
-    timeouts.push(timeout);
+    }, 3000);
 
     return () => {
       mounted = false;
-      clearAllTimeouts();
+      if (timeout) clearTimeout(timeout);
       if (subscription) {
         subscription.unsubscribe();
       }

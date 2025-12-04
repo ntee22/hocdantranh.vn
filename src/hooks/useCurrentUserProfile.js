@@ -66,28 +66,9 @@ const useCurrentUserProfile = () => {
     // Initial fetch
     const getInitialSession = async () => {
       try {
-        // Check localStorage first for quick access
-        const storedSession = typeof window !== 'undefined' 
-          ? localStorage.getItem('sb-auth-token') 
-          : null;
-        
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
-          // If there's a stored session but getSession failed, wait and retry
-          if (storedSession) {
-            setTimeout(async () => {
-              const { data: { session: retrySession } } = await supabase.auth.getSession();
-              if (retrySession?.user) {
-                await fetchProfile(retrySession.user);
-              } else {
-                setUser(null);
-                setProfile(null);
-                setLoading(false);
-              }
-            }, 200);
-            return;
-          }
           setError(sessionError.message);
           setLoading(false);
           return;
