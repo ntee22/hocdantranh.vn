@@ -1,0 +1,174 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
+import Button from '../components/UI/Button';
+import SEO from '../components/SEO/SEO';
+import './Login.css';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        // Check localStorage first for quick check
+        const storedSession = typeof window !== 'undefined' 
+          ? localStorage.getItem('sb-auth-token') 
+          : null;
+        
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error checking session:', error);
+          // If there's a stored session but getSession failed, wait and retry
+          if (storedSession) {
+            setTimeout(async () => {
+              const { data: { session: retrySession } } = await supabase.auth.getSession();
+              if (retrySession && window.location.pathname === '/login') {
+                navigate('/teacher', { replace: true });
+              }
+            }, 200);
+            return;
+          }
+        }
+        
+        if (session && window.location.pathname === '/login') {
+          // User is already logged in, redirect to teacher dashboard
+          navigate('/teacher', { replace: true });
+        }
+      } catch (err) {
+        console.error('Error in checkSession:', err);
+      }
+    };
+    
+    checkSession();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && window.location.pathname === '/login') {
+        // User logged in, redirect to teacher dashboard
+        navigate('/teacher', { replace: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const validateForm = () => {
+    if (!email.trim()) {
+      setError('Vui lòng nhập email');
+      return false;
+    }
+    if (!email.includes('@')) {
+      setError('Email không hợp lệ');
+      return false;
+    }
+    if (!password) {
+      setError('Vui lòng nhập mật khẩu');
+      return false;
+    }
+    if (password.length < 6) {
+      setError('Mật khẩu phải có ít nhất 6 ký tự');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password,
+      });
+
+      if (authError) {
+        setError(authError.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
+        setLoading(false);
+      } else if (data?.user) {
+        // Wait a moment for session to be fully established, then navigate
+        // This ensures the session is in localStorage before ProtectedRoute checks it
+        await new Promise(resolve => setTimeout(resolve, 300));
+        navigate('/teacher', { replace: true });
+      }
+    } catch (err) {
+      setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <SEO
+        title="Đăng nhập - Học Đàn Tranh"
+        description="Đăng nhập vào hệ thống quản lý"
+      />
+      <div className="login-page">
+        <div className="login-container">
+          <div className="login-card">
+            <h1 className="login-title">Đăng Nhập</h1>
+            <p className="login-subtitle">Vui lòng đăng nhập để tiếp tục</p>
+
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="login-form">
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Nhập email của bạn"
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Mật khẩu</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Nhập mật khẩu"
+                  disabled={loading}
+                  className="form-input"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                variant="primary"
+                className="login-button"
+                disabled={loading}
+              >
+                {loading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
+              </Button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Login;

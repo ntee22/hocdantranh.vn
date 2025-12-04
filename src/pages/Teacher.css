@@ -1,0 +1,37 @@
+.teacher-page {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 20px;
+    background-color: var(--color-bg);
+}
+
+.teacher-container {
+    max-width: 1200px;
+    width: 100%;
+    text-align: center;
+}
+
+.teacher-title {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.teacher-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+@media screen and (max-width: 768px) {
+    .teacher-title {
+        font-size: 2rem;
+    }
+
+    .teacher-subtitle {
+        font-size: 1rem;
+    }
+}

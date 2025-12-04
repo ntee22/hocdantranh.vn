@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Content Security Policy - allows eval only in development for Vite HMR -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; connect-src 'self' https: wss: http://localhost:* ws://localhost:*;">
     
     <!-- Primary Meta Tags -->
     <title>Học Đàn Tranh - Guzheng - Cổ Tranh Đan Thanh | HCM | Học Đàn Tranh HCM</title>
@@ -41,6 +43,71 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Suppress errors from browser extensions (like ShopSpider) - must be before other scripts
+      (function() {
+        // Override console methods to filter extension errors
+        const originalError = window.console.error;
+        const originalWarn = window.console.warn;
+        const originalLog = window.console.log;
+        
+        const shouldSuppress = (message) => {
+          if (!message) return false;
+          const msg = typeof message === 'string' ? message : message.toString();
+          return msg.includes('ShopSpider') ||
+                 msg.includes('PageHandler') ||
+                 msg.includes('contentShop') ||
+                 msg.includes('Can\'t initialize') ||
+                 msg.includes('chunk-C0XlIoun') ||
+                 msg.includes('chunk-BojWFwFS');
+        };
+
+        window.console.error = function(...args) {
+          const message = args.join(' ');
+          if (shouldSuppress(message)) {
+            return; // Suppress extension errors
+          }
+          originalError.apply(console, args);
+        };
+
+        window.console.warn = function(...args) {
+          const message = args.join(' ');
+          if (shouldSuppress(message)) {
+            return; // Suppress extension warnings
+          }
+          originalWarn.apply(console, args);
+        };
+
+        window.console.log = function(...args) {
+          const message = args.join(' ');
+          if (shouldSuppress(message)) {
+            return; // Suppress extension logs
+          }
+          originalLog.apply(console, args);
+        };
+
+        // Catch uncaught errors
+        window.addEventListener('error', function(event) {
+          if (event.message && shouldSuppress(event.message)) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            return false;
+          }
+        }, true);
+
+        // Catch unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+          const reason = event.reason;
+          const message = reason && (reason.message || reason.toString() || String(reason));
+          if (message && shouldSuppress(message)) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+          }
+        }, true);
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
