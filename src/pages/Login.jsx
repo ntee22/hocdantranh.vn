@@ -12,21 +12,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is already logged in
+  // Check if user is already logged in on mount
   useEffect(() => {
     const checkSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (session && window.location.pathname === '/login') {
-          // User is already logged in, redirect to teacher dashboard
-          navigate('/teacher', { replace: true });
-        }
-      } catch (err) {
-        console.error('Error in checkSession:', err);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/teacher', { replace: true });
       }
     };
-
     checkSession();
   }, [navigate]);
 
@@ -61,24 +54,26 @@ const Login = () => {
     setLoading(true);
 
     try {
-      console.log('Login: Attempting sign in...');
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password,
       });
 
-      console.log('Login: Sign in response:', { hasUser: !!data?.user, hasError: !!authError });
-
       if (authError) {
         setError(authError.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
         setLoading(false);
-      } else if (data?.user) {
-        // Session is established, navigate to teacher dashboard
-        console.log('Login: Navigating to /teacher');
+        return;
+      }
+
+      if (data?.user) {
+        // Navigate directly without delay for faster redirect
         navigate('/teacher', { replace: true });
+      } else {
+        setError('Đăng nhập thất bại. Vui lòng thử lại.');
+        setLoading(false);
       }
     } catch (err) {
-      console.error('Login: Error during sign in:', err);
+      console.error('Login error:', err);
       setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
       setLoading(false);
     }
@@ -113,6 +108,7 @@ const Login = () => {
                   placeholder="Nhập email của bạn"
                   disabled={loading}
                   className="form-input"
+                  autoComplete="email"
                 />
               </div>
 
@@ -126,6 +122,7 @@ const Login = () => {
                   placeholder="Nhập mật khẩu"
                   disabled={loading}
                   className="form-input"
+                  autoComplete="current-password"
                 />
               </div>
 

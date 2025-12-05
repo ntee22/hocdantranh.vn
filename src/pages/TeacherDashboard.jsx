@@ -41,78 +41,57 @@ const TeacherDashboard = () => {
 
   const fetchStudents = useCallback(async () => {
     if (!user) {
-      console.log('fetchStudents: No user, setting loading to false');
       setLoading(false);
       return;
     }
-
-    console.log('fetchStudents: Starting fetch, user:', user.id, 'isSuperAdmin:', isSuperAdmin);
 
     try {
       setLoading(true);
       setError('');
 
+      const userIsSuperAdmin = profile?.role === 'superadmin';
+
+      // Only select needed columns for faster query
       let query = supabase
         .from('students')
-        .select('*');
+        .select('id, name, phone, start_date, end_date, sessions_left, total_paid, branch, teacher_id');
 
-      // If superadmin, show all students; otherwise filter by teacher_id
-      if (!isSuperAdmin) {
+      // Filter by teacher_id unless superadmin
+      if (!userIsSuperAdmin) {
         query = query.eq('teacher_id', user.id);
       }
 
-      console.log('fetchStudents: Executing query...');
-      const { data: studentsDataRaw, error: studentsError } = await query
-        .order('start_date', { ascending: false });
-
-      console.log('fetchStudents: Query completed', {
-        dataLength: studentsDataRaw?.length,
-        error: studentsError?.message
-      });
+      const { data, error: studentsError } = await query
+        .order('start_date', { ascending: false })
+        .limit(100); // Limit to 100 students for faster initial load
 
       if (studentsError) {
         console.error('Error fetching students:', studentsError);
         setError('Lỗi khi tải danh sách học sinh: ' + studentsError.message);
         setStudents([]);
-        setLoading(false);
         return;
       }
 
-      const studentsData = studentsDataRaw || [];
-      console.log('fetchStudents: Setting students, count:', studentsData.length);
-      setStudents(studentsData);
-
-      // Filtering will be applied in useEffect
+      setStudents(data || []);
     } catch (err) {
       console.error('Error fetching students:', err);
-      setError(err.message || 'Đã xảy ra lỗi khi tải danh sách học sinh');
-      setStudents([]); // Set empty array on error
+      setError('Đã xảy ra lỗi khi tải danh sách học sinh');
+      setStudents([]);
     } finally {
-      console.log('fetchStudents: Setting loading to false');
       setLoading(false);
     }
-  }, [user, isSuperAdmin]);
+  }, [user, profile]);
 
   useEffect(() => {
-    console.log('TeacherDashboard useEffect:', {
-      profileLoading,
-      hasUser: !!user,
-      userId: user?.id,
-      isSuperAdmin
-    });
-
-    if (!profileLoading) {
-      if (user) {
-        console.log('TeacherDashboard: Calling fetchStudents');
-        fetchStudents();
-      } else {
-        console.log('TeacherDashboard: No user, setting loading to false');
-        setLoading(false);
-      }
-    } else {
-      console.log('TeacherDashboard: Still loading profile, waiting...');
+    // Wait for profile to load, then fetch students
+    if (!profileLoading && user) {
+      fetchStudents();
+    } else if (!profileLoading && !user) {
+      setLoading(false);
     }
-  }, [user, profileLoading, isSuperAdmin, fetchStudents]);
+    // Note: fetchStudents is NOT in dependencies to avoid infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileLoading, user, profile?.role]);
 
   // Apply status filter and search when they change
   useEffect(() => {
@@ -134,14 +113,37 @@ const TeacherDashboard = () => {
 
   const handleLogout = async () => {
     try {
+      console.log('Logout: Attempting to sign out...');
+      
+      // Clear local session data first
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('sb-auth-token');
+      }
+      
       const { error } = await supabase.auth.signOut();
+      
       if (error) {
         console.error('Error signing out:', error);
+        // Even if signOut fails, clear local storage and redirect
+        if (typeof window !== 'undefined') {
+          localStorage.clear();
+        }
+        navigate('/login', { replace: true });
       } else {
-        navigate('/login');
+        console.log('Logout: Successfully signed out');
+        // Clear any remaining session data
+        if (typeof window !== 'undefined') {
+          localStorage.clear();
+        }
+        navigate('/login', { replace: true });
       }
     } catch (err) {
       console.error('Error signing out:', err);
+      // On error, still try to clear and redirect
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+      }
+      navigate('/login', { replace: true });
     }
   };
 
@@ -430,13 +432,7 @@ const TeacherDashboard = () => {
             </Button>
           </div>
 
-          {(profileError || error) && (
-            <div className="error-message">
-              {profileError || error}
-            </div>
-          )}
-
-          {(profileLoading || (loading && students.length === 0)) && (
+          {(profileLoading || loading) && (
             <div className="teacher-dashboard-content">
               <div className="loading-state">
                 <div className="loading-spinner"></div>
@@ -445,7 +441,31 @@ const TeacherDashboard = () => {
             </div>
           )}
 
-          {!profileLoading && !(loading && students.length === 0) && (
+          {!profileLoading && !loading && (profileError || error) && (
+            <div className="error-message">
+              {profileError || error}
+            </div>
+          )}
+
+          {!profileLoading && !loading && !user && (
+            <div className="teacher-dashboard-content">
+              <div className="loading-state">
+                <div className="error-message" style={{ maxWidth: '600px', margin: '2rem auto' }}>
+                  <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>
+                    Không tìm thấy phiên đăng nhập. Vui lòng đăng nhập lại.
+                  </p>
+                  <Button 
+                    onClick={() => navigate('/login', { replace: true })} 
+                    variant="primary"
+                  >
+                    Đăng nhập
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!profileLoading && !loading && user && (
             <div className="teacher-dashboard-content">
               <>
                 <div className="students-header">

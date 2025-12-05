@@ -4,13 +4,6 @@ import { supabase } from '../supabaseClient';
 /**
  * Custom hook to fetch and cache the current user's profile from Supabase
  * Combines session data with profile data from the profiles table
- * 
- * @returns {Object} { user, profile, loading, error, refetch }
- *   - user: The Supabase auth user object
- *   - profile: The profile data from profiles table (includes role, branch, full_name)
- *   - loading: Boolean indicating if data is being fetched
- *   - error: Error message if any
- *   - refetch: Function to manually refetch the profile
  */
 const useCurrentUserProfile = () => {
   const [user, setUser] = useState(null);
@@ -31,21 +24,34 @@ const useCurrentUserProfile = () => {
       setLoading(true);
       setError(null);
 
-      // Query the profiles table using the user's id
-      const { data: profileData, error: profileError } = await supabase
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 3000);
+      });
+
+      const queryPromise = supabase
         .from('profiles')
-        .select('*')
+        .select('id, full_name, role, branch, created_at')
         .eq('id', sessionUser.id)
         .single();
 
+      const { data: profileData, error: profileError } = await Promise.race([
+        queryPromise,
+        timeoutPromise
+      ]);
+
       if (profileError) {
-        // If profile doesn't exist, that's okay - user might not have a profile yet
+        // Profile doesn't exist or query failed
         if (profileError.code === 'PGRST116') {
+          // No profile found, continue with user only
           setUser(sessionUser);
           setProfile(null);
           setError(null);
         } else {
-          throw profileError;
+          console.error('Profile query error:', profileError);
+          setUser(sessionUser);
+          setProfile(null);
+          setError(profileError.message);
         }
       } else {
         setUser(sessionUser);
@@ -54,25 +60,23 @@ const useCurrentUserProfile = () => {
       }
     } catch (err) {
       console.error('Error fetching profile:', err);
-      setError(err.message || 'Lỗi khi tải thông tin người dùng');
+      // Still set user even if profile fails
       setUser(sessionUser);
       setProfile(null);
+      setError(err.message || 'Lỗi khi tải thông tin người dùng');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Initial fetch
+    let mounted = true;
+
     const getInitialSession = async () => {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (sessionError) {
-          setError(sessionError.message);
-          setLoading(false);
-          return;
-        }
+        if (!mounted) return;
 
         if (session?.user) {
           await fetchProfile(session.user);
@@ -82,17 +86,21 @@ const useCurrentUserProfile = () => {
           setLoading(false);
         }
       } catch (err) {
-        console.error('Error in getInitialSession:', err);
-        setUser(null);
-        setProfile(null);
-        setLoading(false);
+        console.error('Error loading session:', err);
+        if (mounted) {
+          setUser(null);
+          setProfile(null);
+          setLoading(false);
+        }
       }
     };
 
     getInitialSession();
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      
       if (session?.user) {
         await fetchProfile(session.user);
       } else {
@@ -103,17 +111,16 @@ const useCurrentUserProfile = () => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const refetch = async () => {
-    if (user) {
-      await fetchProfile(user);
-    } else {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        await fetchProfile(session.user);
-      }
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      await fetchProfile(session.user);
     }
   };
 
@@ -123,7 +130,6 @@ const useCurrentUserProfile = () => {
     loading,
     error,
     refetch,
-    // Convenience properties
     isTeacher: profile?.role === 'teacher',
     isSuperAdmin: profile?.role === 'superadmin',
     role: profile?.role || null,
